@@ -1,24 +1,31 @@
 import { View, StyleSheet } from 'react-native';
-import { useLayoutEffect } from 'react';
+import { useContext, useLayoutEffect } from 'react';
 import IconButton from '../components/ExpensesOutput/UI/IconButton';
 import { GlobalStyles } from '../constants/styles';
 import Button from '../components/ExpensesOutput/UI/Button';
+import { ExpensesContext } from '../store/expenses-context';
 
 function ManageExpenses({ route, navigation }) {
+    const expenseCtx = useContext(ExpensesContext);
     const editedExpenseId = route.params?.expenseId;
     const isEditing = !!editedExpenseId;
 
     function deleteExpenseHandler() {
-        // Implement deletion logic here
+        expenseCtx.deleteExpense(editedExpenseId);
         navigation.goBack()
-
     }
 
     function cancelHandler() {
         navigation.goBack()
-     }
+    }
 
-    function confirmHandler() { 
+    function confirmHandler() {
+        if (isEditing) {
+            expenseCtx.updateExpense(editedExpenseId, { description: 'Test!!!!', amount: 29.99, date: new Date('2024-09-30') })
+        } else {
+            expenseCtx.addExpense({ description: 'Test', amount: 19.99, date: new Date('2024-10-01') })
+
+        }
         navigation.goBack()
 
     }
@@ -61,19 +68,19 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 24,
         backgroundColor: GlobalStyles.colors.primary800,
-        
+
     },
 
     buttons: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        
+
     },
     button: {
         minWidth: 120,
         marginHorizontal: 8,
-        
+
 
     },
     deleteContainer: {
